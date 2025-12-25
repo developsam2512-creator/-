@@ -1,34 +1,237 @@
 <!DOCTYPE html>
-<html lang="ar">
+<html lang="ar" dir="rtl">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>جاري التوجيه إلى الحاسبة الجديدة...</title>
-    <meta http-equiv="refresh" content="0; url=dashboard.html">
+    <title>حاسبة الأسمدة الذكية | مواسم تك</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="icon" type="image/svg+xml" href="assets/images/favicon.svg">
+    <link rel="stylesheet" href="css/dashboard.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         body {
-            font-family: 'Cairo', sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
             background: #f0fff4;
-            color: #2d5c2a;
+            background-image: linear-gradient(135deg, #f0fff4 0%, #ffffff 100%);
         }
 
-        .loader {
+        .calculator-container {
+            max-width: 900px;
+            margin: 40px auto;
+            background: white;
+            padding: 0;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+        }
+
+        .calc-header {
+            background: var(--primary-color);
+            color: white;
+            padding: 20px;
             text-align: center;
+        }
+
+        .calc-body {
+            padding: 30px;
+        }
+
+        .back-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            text-decoration: none;
+            color: #2d5c2a;
+            display: flex;
+            align-items: center;
+            gap: 5px;
         }
     </style>
 </head>
 
 <body>
-    <div class="loader">
-        <h2>جاري نقلك إلى النسخة الجديدة...</h2>
-        <p>يرجى الانتظار</p>
-        <script>window.location.href = "dashboard.html";</script>
+
+    <a href="index.html" class="back-btn"><i class="fas fa-arrow-right"></i> العودة للرئيسية</a>
+
+    <div class="calculator-container">
+        <div class="calc-header">
+            <h1><i class="fas fa-leaf"></i> حاسبة الأسمدة الذكية</h1>
+            <p>خطط تسميد دقيقة لمحاصيل صحية وإنتاجية عالية</p>
+        </div>
+
+        <div class="calc-body">
+            <!-- Workflow Steps -->
+            <div class="workflow-steps" style="margin-bottom: 30px;">
+                <div class="step active" data-step="1">
+                    <div class="step-number">1</div><span>المحصول</span>
+                </div>
+                <div class="step" data-step="2">
+                    <div class="step-number">2</div><span>التربة والري</span>
+                </div>
+                <div class="step" data-step="3">
+                    <div class="step-number">3</div><span>بيانات إضافية</span>
+                </div>
+                <div class="step" data-step="4">
+                    <div class="step-number">4</div><span>النتائج</span>
+                </div>
+            </div>
+
+            <!-- Step 1 -->
+            <div class="form-step active" id="step1">
+                <h3>اختر المحصول والمساحة</h3>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>نوع المحصول</label>
+                        <select id="cropType" class="form-control"></select>
+                    </div>
+                    <div class="form-group">
+                        <label>المساحة</label>
+                        <div class="input-with-unit">
+                            <input type="number" id="areaSize" class="form-control" placeholder="المساحة">
+                            <select id="areaUnit" class="unit-select">
+                                <option value="hectare">هكتار</option>
+                                <option value="donum">دونم</option>
+                                <option value="acre">فدان</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>المنطقة</label>
+                        <select id="region" class="form-control">
+                            <option value="central">الوسطى</option>
+                            <option value="north">الشمالية</option>
+                            <option value="south">الجنوبية</option>
+                            <option value="east">الشرقية</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="text-left mt-20">
+                    <button class="btn btn-primary" onclick="window.fertilizerController.nextStep()">التالي <i
+                            class="fas fa-arrow-left"></i></button>
+                </div>
+            </div>
+
+            <!-- Step 2 -->
+            <div class="form-step" id="step2" style="display:none;">
+                <h3>خصائص التربة والري</h3>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>نوع التربة</label>
+                        <div class="selection-grid">
+                            <button class="selection-btn active" onclick="void(0)" data-val="clay">طينية</button>
+                            <button class="selection-btn" onclick="void(0)" data-val="sandy">رملية</button>
+                        </div>
+                        <input type="hidden" id="soilType" value="clay">
+                    </div>
+                    <div class="form-group">
+                        <label>نظام الري</label>
+                        <div class="selection-grid">
+                            <button class="selection-btn active" onclick="void(0)" data-val="drip">تنقيط</button>
+                            <button class="selection-btn" onclick="void(0)" data-val="pivot">محوري</button>
+                        </div>
+                        <input type="hidden" id="irrigationType" value="drip">
+                    </div>
+                    <div class="form-group">
+                        <label>الموسم</label>
+                        <select id="season" class="form-control">
+                            <option value="spring">ربيعي</option>
+                            <option value="summer">صيفي</option>
+                            <option value="winter">شتوي</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="flex-between mt-20">
+                    <button class="btn btn-secondary" onclick="window.fertilizerController.prevStep()">السابق</button>
+                    <button class="btn btn-primary" onclick="window.fertilizerController.nextStep()">التالي</button>
+                </div>
+            </div>
+
+            <!-- Step 3 -->
+            <div class="form-step" id="step3" style="display:none;">
+                <h3>بيانات إضافية</h3>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>جودة البذور</label>
+                        <select id="seedQuality" class="form-control">
+                            <option value="standard">عادية</option>
+                            <option value="hybrid">هجين</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="flex-between mt-20">
+                    <button class="btn btn-secondary" onclick="window.fertilizerController.prevStep()">السابق</button>
+                    <button class="btn btn-primary" onclick="window.fertilizerController.nextStep()">احسب
+                        النتائج</button>
+                </div>
+            </div>
+
+            <!-- Step 4: Results -->
+            <div class="form-step" id="step4" style="display:none;">
+                <h3>النتائج والتوصيات</h3>
+
+                <div class="results-tabs">
+                    <button class="tab-btn active" data-tab="summary">المالية</button>
+                    <button class="tab-btn" data-tab="quantities">الكميات</button>
+                    <button class="tab-btn" data-tab="recommendations">التوصيات</button>
+                </div>
+
+                <div id="summaryTab" class="tab-content active" style="display:block;">
+                    <div class="results-summary">
+                        <div class="summary-card">
+                            <h4>التكلفة</h4>
+                            <div class="summary-value" id="resTotalCost">0</div>
+                        </div>
+                        <div class="summary-card">
+                            <h4>الإيراد</h4>
+                            <div class="summary-value" id="resRevenue">0</div>
+                        </div>
+                        <div class="summary-card">
+                            <h4>الربح</h4>
+                            <div class="summary-value" id="resProfit">0</div>
+                        </div>
+                    </div>
+                    <div style="height:250px; margin-top:20px;"><canvas id="financialChart"></canvas></div>
+                </div>
+
+                <div id="quantitiesTab" class="tab-content" style="display:none;">
+                    <table id="detailsTable" class="table">
+                        <thead>
+                            <tr>
+                                <th>السماد</th>
+                                <th>الكمية</th>
+                                <th>الوحدة</th>
+                                <th>التكلفة</th>
+                                <th>ملاحظات</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+
+                <div id="recommendationsTab" class="tab-content" style="display:none;">
+                    <div class="recommendation-card">
+                        <h4>توصيات التربة</h4>
+                        <p id="recSoil">-</p>
+                    </div>
+                    <div style="margin-top:20px;">
+                        <h4>الجدول الزمني</h4>
+                        <div id="timelineDetails"></div>
+                    </div>
+                </div>
+
+                <div class="text-center mt-30">
+                    <button class="btn btn-outline" onclick="window.location.reload()">حساب جديد</button>
+                </div>
+            </div>
+
+        </div>
     </div>
+
+    <script src="js/fertilizer_data.js"></script>
+    <script src="js/fertilizer_logic.js"></script>
+    <script src="js/fertilizer_ui.js"></script>
 </body>
 
 </html>
