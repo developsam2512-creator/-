@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مواسم تك 2025 - النسخة المتكاملة</title>
+    <!-- Use local css if possible, but user provided CDN links for libs -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="icon" type="image/svg+xml" href="assets/images/favicon.svg">
+    <link rel="stylesheet" href="css/dashboard.css">
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+
+    <!-- Header -->
+    <header class="app-header">
+        <div class="header-container">
+            <div class="logo">
+                <i class="fas fa-seedling"></i>
+                <div>
+                    <h1>مواسم تك</h1>
+                    <span class="tagline">الحاسبة الزراعية الذكية المتكاملة</span>
+                </div>
+            </div>
+
+            <nav class="main-nav">
+                <ul>
+                    <li><a href="index.html"><i class="fas fa-home"></i> الرئيسية</a></li>
+                    <li><a href="#" class="active"><i class="fas fa-tachometer-alt"></i> لوحة التحكم</a></li>
+                    <li><a href="#projects"><i class="fas fa-folder"></i> مشاريعي</a></li>
+                </ul>
+            </nav>
+
+            <div class="user-controls">
+                <div class="sync-status">
+                    <i class="fas fa-cloud"></i>
+                    <span id="syncStatus">مزامن</span>
+                </div>
+                <button class="btn btn-primary" id="newProjectBtn">
+                    <i class="fas fa-plus"></i> مشروع جديد
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+
+        <!-- Dashboard Section -->
+        <section class="dashboard">
+            <div class="welcome-section">
+                <h2>مرحباً بك في مواسم تك</h2>
+                <p class="subtitle">نظام الحسابات الزراعية الذكي - بنية على بيانات واقعية ودقيقة</p>
+
+                <div class="quick-stats">
+                    <div class="stat-card">
+                        <i class="fas fa-leaf"></i>
+                        <h3>المحاصيل المدعومة</h3>
+                        <span class="stat-value" id="statCrops">-</span>
+                    </div>
+                    <div class="stat-card">
+                        <i class="fas fa-calculator"></i>
+                        <h3>حسابات هذا الشهر</h3>
+                        <span class="stat-value" id="statCalculations">0</span>
+                    </div>
+                    <div class="stat-card">
+                        <i class="fas fa-folder-open"></i>
+                        <h3>المشاريع المحفوظة</h3>
+                        <span class="stat-value" id="statProjects">0</span>
+                    </div>
+                    <div class="stat-card">
+                        <i class="fas fa-chart-line"></i>
+                        <h3>دقة الحسابات</h3>
+                        <span class="stat-value" id="statAccuracy">98%</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Calculator App -->
+            <div id="calculatorApp" class="calculator-app">
+                <div class="workflow-steps">
+                    <div class="step active" data-step="1">
+                        <div class="step-number">1</div>
+                        <span>المحصول والمساحة</span>
+                    </div>
+                    <div class="step" data-step="2">
+                        <div class="step-number">2</div>
+                        <span>التربة والري</span>
+                    </div>
+                    <div class="step" data-step="3">
+                        <div class="step-number">3</div>
+                        <span>البيانات الإضافية</span>
+                    </div>
+                    <div class="step" data-step="4">
+                        <div class="step-number">4</div>
+                        <span>النتائج والتوصيات</span>
+                    </div>
+                </div>
+
+                <!-- Projects Manager View (Hidden by default) -->
+                <div id="projectsManager"
+                    style="display:none; background:white; padding:30px; border-radius:15px; box-shadow:0 10px 30px rgba(0,0,0,0.05);">
+                    <div
+                        style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; border-bottom:2px solid #f0f0f0; padding-bottom:15px;">
+                        <h3 style="color:var(--primary-color); margin:0;"><i class="fas fa-folder-open"></i> إدارة
+                            مشاريعي</h3>
+                        <button class="btn btn-secondary" onclick="window.bridge.showCalculator()">
+                            <i class="fas fa-arrow-right"></i> العودة للحاسبة
+                        </button>
+                    </div>
+
+                    <div id="projectsListContainer">
+                        <p class="text-center text-muted">لا توجد مشاريع محفوظة حالياً.</p>
+                    </div>
+                </div>
+
+                <div id="calculatorView" class="calculator-form">
+                    <!-- Step 1 -->
+                    <div class="form-step active" id="step1">
+                        <h3><i class="fas fa-leaf"></i> اختر المحصول والمساحة</h3>
+
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label><i class="fas fa-carrot"></i> نوع المحصول</label>
+                                <!-- Will be populated by JS from FERTILIZER_KNOWLEDGE_BASE -->
+                                <select id="cropType" class="form-control">
+                                    <option value="">-- تحميل المحاصيل... --</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label><i class="fas fa-award"></i> جودة البذور</label>
+                                <select id="seedQuality" class="form-control">
+                                    <option value="standard">عادية (محلية)</option>
+                                    <option value="hybrid">هجين F1 (مستورد)</option>
+                                    <option value="organic">عضوي معتمد</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label><i class="fas fa-border-all"></i> المساحة المزروعة</label>
+                                <div class="input-with-unit">
+                                    <input type="number" id="areaSize" class="form-control" placeholder="مثلاً: 10"
+                                        min="0.1" step="0.1">
+                                    <select id="areaUnit" class="unit-select">
+                                        <option value="hectare">هكتار</option>
+                                        <option value="donum">دونم</option>
+                                        <option value="acre">فدان</option>
+                                        <option value="meter">متر²</option>
+                                    </select>
+                                </div>
+                                <div style="margin-top: 5px;">
+                                    <button type="button" class="btn btn-sm btn-outline-info"
+                                        onclick="window.bridge.showAreaCalculator()"
+                                        style="width:100%; border-style:dashed;">
+                                        <i class="fas fa-calculator"></i> لا تعرف المساحة؟ احسبها من عدد الأشجار
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Area Calculator Modal -->
+                            <div id="areaCalcModal"
+                                style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:9999; justify-content:center; align-items:center;">
+                                <div
+                                    style="background:white; padding:25px; border-radius:15px; width:90%; max-width:400px; box-shadow:0 5px 25px rgba(0,0,0,0.2);">
+                                    <h4
+                                        style="margin-top:0; color:#2c3e50; border-bottom:1px solid #eee; padding-bottom:10px;">
+                                        <i class="fas fa-ruler-combined"></i> حاسبة المساحة العكسية
+                                    </h4>
+
+                                    <div class="form-group">
+                                        <label id="lbl_calc_qty">العدد / الكمية</label>
+                                        <input type="number" id="calc_qty" class="form-control" placeholder="0">
+                                    </div>
+
+                                    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
+                                        <div class="form-group" id="group_calc_sp1">
+                                            <label id="lbl_calc_sp1">المسافة 1</label>
+                                            <input type="number" id="calc_sp1" class="form-control" placeholder="0">
+                                        </div>
+                                        <div class="form-group" id="group_calc_sp2">
+                                            <label id="lbl_calc_sp2">المسافة 2</label>
+                                            <input type="number" id="calc_sp2" class="form-control" placeholder="0">
+                                        </div>
+                                    </div>
+
+                                    <div
+                                        style="background:#f8f9fa; padding:15px; border-radius:8px; text-align:center; margin:15px 0;">
+                                        <label style="display:block; color:#7f8c8d; margin-bottom:5px;">المساحة
+                                            الناتجة:</label>
+                                        <strong id="calc_result_display" style="font-size:1.4em; color:#27ae60;">0
+                                            هكتار</strong>
+                                        <div id="calc_result_details" style="font-size:0.8em; color:#95a5a6;">(0 متر
+                                            مربع)</div>
+                                    </div>
+
+                                    <div style="display:flex; justify-content:space-between; gap:10px;">
+                                        <button class="btn btn-secondary"
+                                            onclick="document.getElementById('areaCalcModal').style.display='none'"
+                                            style="flex:1;">إلغاء</button>
+                                        <button class="btn btn-warning" onclick="window.bridge.resetAreaCalcInputs()"
+                                            style="flex:1; background:#f39c12; color:white; border:none;">مسح</button>
+                                        <button class="btn btn-primary" onclick="window.bridge.applyArea()"
+                                            style="flex:2;">اعتماد</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label><i class="fas fa-map-marker-alt"></i> المنطقة</label>
+                                <select id="region" class="form-control">
+                                    <option value="central">الوسطى (جاف وحار)</option>
+                                    <option value="north">الشمالية (معتدل)</option>
+                                    <option value="south">الجنوبية (رطب)</option>
+                                    <option value="east">الشرقية (رطب وحار)</option>
+                                </select>
+                            </div>
+
+
+                            <!-- Dynamic Inputs (Injected via JS) -->
+                            <div id="dynamicCropInputs" class="form-group"
+                                style="grid-column: 1 / -1; display:none; background:#f9fbfd; padding:15px; border-radius:8px; border:1px solid #e1e4e8; margin-top:10px;">
+                                <!-- Content will be injected here based on crop type -->
+                            </div>
+                        </div>
+
+                        <div style="text-align: left;">
+                            <button class="btn btn-primary" onclick="window.bridge.nextStep()">
+                                التالي <i class="fas fa-arrow-left"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Step 2 -->
+                    <div class="form-step" id="step2">
+                        <h3><i class="fas fa-tint"></i> خصائص التربة والري</h3>
+
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label><i class="fas fa-mountain"></i> نوع التربة</label>
+                                <div class="selection-grid">
+                                    <button class="selection-btn active"
+                                        onclick="window.bridge.selectOption(this, 'soilType', 'clay')" type="button">
+                                        طينية/طمية
+                                    </button>
+                                    <button class="selection-btn"
+                                        onclick="window.bridge.selectOption(this, 'soilType', 'sandy')" type="button">
+                                        رملية
+                                    </button>
+                                    <button class="selection-btn"
+                                        onclick="window.bridge.selectOption(this, 'soilType', 'mixed')" type="button">
+                                        صفراء/مختلطة
+                                    </button>
+                                </div>
+                                <input type="hidden" id="soilType" value="clay">
+                            </div>
+
+                            <div class="form-group">
+                                <label><i class="fas fa-water"></i> نظام الري</label>
+                                <div class="selection-grid">
+                                    <button class="selection-btn"
+                                        onclick="window.bridge.selectOption(this, 'irrigationType', 'flood')"
+                                        type="button">
+                                        غمر (تقليدي)
+                                    </button>
+                                    <button class="selection-btn"
+                                        onclick="window.bridge.selectOption(this, 'irrigationType', 'sprinkler')"
+                                        type="button">
+                                        رشاشات محورية
+                                    </button>
+                                    <button class="selection-btn active"
+                                        onclick="window.bridge.selectOption(this, 'irrigationType', 'drip')"
+                                        type="button">
+                                        تنقيط (حديث)
+                                    </button>
+                                </div>
+                                <input type="hidden" id="irrigationType" value="drip">
+                            </div>
+
+                            <!-- Advanced Soil Input Toggle -->
+                            <div class="form-group" style="grid-column: 1 / -1;">
+                                <label>
+                                    <input type="checkbox" id="useSoilAnalysis"
+                                        onchange="document.getElementById('soilAnalysisInputs').style.display = this.checked ? 'grid' : 'none'">
+                                    <i class="fas fa-flask"></i> لدي تحليل تربة دقيق (لزيادة الدقة)
+                                </label>
+                            </div>
+
+                            <!-- Advanced Soil Inputs (Hidden by default) -->
+                            <div class="form-grid" id="soilAnalysisInputs"
+                                style="display:none; grid-column: 1 / -1; background: #f9f9f9; padding: 15px; border-radius: 8px;">
+                                <div class="form-group">
+                                    <label>الرقم الهيدروجيني (pH)</label>
+                                    <input type="number" id="soilPH" class="form-control" placeholder="7.5" step="0.1">
+                                </div>
+                                <div class="form-group">
+                                    <label>التوصيل الكهربائي (EC)</label>
+                                    <input type="number" id="soilEC" class="form-control" placeholder="1.5" step="0.1">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label><i class="fas fa-cloud-sun"></i> الموسم الزراعي</label>
+                                <div class="selection-grid">
+                                    <button class="selection-btn active"
+                                        onclick="window.bridge.selectOption(this, 'season', 'spring')" type="button">
+                                        ربيعي
+                                    </button>
+                                    <button class="selection-btn"
+                                        onclick="window.bridge.selectOption(this, 'season', 'summer')" type="button">
+                                        صيفي
+                                    </button>
+                                    <button class="selection-btn"
+                                        onclick="window.bridge.selectOption(this, 'season', 'fall')" type="button">
+                                        خريفي
+                                    </button>
+                                    <button class="selection-btn"
+                                        onclick="window.bridge.selectOption(this, 'season', 'winter')" type="button">
+                                        شتوي
+                                    </button>
+                                </div>
+                                <input type="hidden" id="season" value="spring">
+                            </div>
+                        </div>
+
+                        <div style="display: flex; justify-content: space-between;">
+                            <button class="btn btn-secondary" onclick="window.bridge.prevStep()">
+                                <i class="fas fa-arrow-right"></i> السابق
+                            </button>
+                            <button class="btn btn-primary" onclick="window.bridge.nextStep()">
+                                التالي <i class="fas fa-arrow-left"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Step 3 -->
+                    <div class="form-step" id="step3">
+                        <h3><i class="fas fa-chart-line"></i> البيانات المالية والإضافية</h3>
+
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label><i class="fas fa-wallet"></i> الميزانية المتاحة (ريال)</label>
+                                <input type="number" id="budget" class="form-control"
+                                    placeholder="أدخل الميزانية المتوقعة">
+                            </div>
+
+                            <div class="form-group">
+                                <label><i class="fas fa-truck"></i> مصدر التموين</label>
+                                <select id="supplySource" class="form-control">
+                                    <option value="local">محلي</option>
+                                    <option value="national">وطني</option>
+                                    <option value="international">دولي</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label><i class="fas fa-tractor"></i> طريقة الزراعة</label>
+                                <select id="plantingMethod" class="form-control">
+                                    <option value="seeds">بذور مباشرة</option>
+                                    <option value="seedlings">شتلات</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label><i class="fas fa-chart-pie"></i> نسبة الاحتياطي</label>
+                                <input type="range" id="reservePercent" class="form-control" min="5" max="20" value="10"
+                                    oninput="document.getElementById('reserveValue').textContent=this.value+'%'">
+                                <div style="display: flex; justify-content: space-between; margin-top: 5px;">
+                                    <span>5%</span>
+                                    <span id="reserveValue">10%</span>
+                                    <span>20%</span>
+                                    <div class="form-group" style="grid-column: 1 / -1; margin-top: 15px;">
+                                        <label><i class="fas fa-exclamation-triangle"></i> مستوى المخاطرة
+                                            المقبول</label>
+                                        <div class="selection-grid">
+                                            <button class="selection-btn"
+                                                onclick="window.bridge.selectOption(this, 'risks', 'low')"
+                                                type="button">
+                                                منخفض (Low)
+                                            </button>
+                                            <button class="selection-btn active"
+                                                onclick="window.bridge.selectOption(this, 'risks', 'medium')"
+                                                type="button">
+                                                متوسط (Medium)
+                                            </button>
+                                            <button class="selection-btn"
+                                                onclick="window.bridge.selectOption(this, 'risks', 'high')"
+                                                type="button">
+                                                مرتفع (High)
+                                            </button>
+                                        </div>
+                                        <input type="hidden" id="risks" value="medium">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div style="display: flex; justify-content: space-between;">
+                            <button class="btn btn-secondary" onclick="window.bridge.prevStep()">
+                                <i class="fas fa-arrow-right"></i> السابق
+                            </button>
+                            <button class="btn btn-primary" onclick="window.bridge.nextStep()">
+                                <i class="fas fa-calculator"></i> احسب النتائج
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Step 4: Results -->
+                    <div class="form-step" id="step4">
+                        <h3><i class="fas fa-chart-bar"></i> النتائج والتوصيات</h3>
+
+                        <!-- Results Tabs -->
+                        <div class="results-tabs">
+                            <nav class="results-nav">
+                                <button class="tab-btn active" data-tab="summary">
+                                    <i class="fas fa-chart-pie"></i> النتائج المالية
+                                </button>
+                                <button class="tab-btn" data-tab="quantities">
+                                    <i class="fas fa-weight"></i> الكميات المطلوبة
+                                </button>
+                                <button class="tab-btn" data-tab="recommendations">
+                                    <i class="fas fa-lightbulb"></i> التوصيات
+                                </button>
+                                <button class="tab-btn" data-tab="risks">
+                                    <i class="fas fa-exclamation-triangle"></i> تحليل المخاطر
+                                </button>
+                            </nav>
+
+                            <!-- Summary Tab -->
+                            <div class="tab-content active" id="summaryTab">
+                                <div class="results-summary">
+                                    <div class="summary-card">
+                                        <h4><i class="fas fa-wallet"></i> التكلفة الكلية</h4>
+                                        <div class="summary-value" id="resTotalCost">0 <span>ر.س</span></div>
+                                        <p style="color: #666; font-size: 0.9rem;">شاملة جميع المدخلات</p>
+                                    </div>
+                                    <div class="summary-card">
+                                        <h4><i class="fas fa-coins"></i> الإيراد المتوقع</h4>
+                                        <div class="summary-value" id="resRevenue">0 <span>ر.س</span></div>
+                                        <p style="color: #666; font-size: 0.9rem;">بناءً على متوسط السوق</p>
+                                    </div>
+                                    <div class="summary-card">
+                                        <h4><i class="fas fa-chart-line"></i> الربح الصافي</h4>
+                                        <div class="summary-value" id="resProfit">0 <span>ر.س</span></div>
+                                        <p style="color: #666; font-size: 0.9rem;">العائد بعد الخصومات</p>
+                                    </div>
+                                    <div class="summary-card">
+                                        <h4><i class="fas fa-percentage"></i> نسبة الربحية</h4>
+                                        <div class="summary-value" id="resProfitMargin">0%</div>
+                                        <p style="color: #666; font-size: 0.9rem;">نسبة الربح إلى التكلفة</p>
+                                    </div>
+                                </div>
+
+                                <div style="height: 300px; margin: 30px 0;">
+                                    <canvas id="financialChart"></canvas>
+                                </div>
+                            </div>
+
+                            <!-- Quantities Tab -->
+                            <div class="tab-content" id="quantitiesTab">
+                                <div class="detailed-table-container">
+                                    <table id="detailsTable">
+                                        <thead>
+                                            <tr>
+                                                <th>البند</th>
+                                                <th>الكمية المطلوبة</th>
+                                                <th>الوحدة</th>
+                                                <th>التكلفة التقديرية</th>
+                                                <th>ملاحظات وتوصيات</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <!-- To be populated by JS -->
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                                <div style="margin-top: 30px; background: #f8f9fa; padding: 20px; border-radius: 8px;">
+                                    <h4><i class="fas fa-info-circle"></i> ملاحظات فنية</h4>
+                                    <p id="technicalNotes">سيتم عرض الملاحظات الفنية هنا بعد الحساب.</p>
+                                </div>
+                            </div>
+
+                            <!-- Recommendations Tab -->
+                            <div class="tab-content" id="recommendationsTab">
+                                <div class="recommendations-grid">
+                                    <div class="recommendation-card priority-high">
+                                        <div class="rec-icon">
+                                            <i class="fas fa-exclamation-circle"></i>
+                                        </div>
+                                        <h4>تجهيز التربة</h4>
+                                        <p id="recSoil">سيتم عرض توصيات التربة هنا</p>
+                                        <div class="rec-timing">
+                                            <i class="fas fa-clock"></i> قبل الزراعة بـ 5-7 أيام
+                                        </div>
+                                    </div>
+
+                                    <div class="recommendation-card priority-medium">
+                                        <div class="rec-icon">
+                                            <i class="fas fa-tint"></i>
+                                        </div>
+                                        <h4>نظام الري</h4>
+                                        <p id="recIrrigation">سيتم عرض توصيات الري هنا</p>
+                                        <div class="rec-timing">
+                                            <i class="fas fa-clock"></i> حسب البرنامج المرفق
+                                        </div>
+                                    </div>
+
+                                    <div class="recommendation-card priority-low">
+                                        <div class="rec-icon">
+                                            <i class="fas fa-bug"></i>
+                                        </div>
+                                        <h4>مكافحة الآفات</h4>
+                                        <p id="recPests">سيتم عرض توصيات المكافحة هنا</p>
+                                        <div class="rec-timing">
+                                            <i class="fas fa-clock"></i> دوري حسب الموسم
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div
+                                    style="margin-top: 30px; padding: 20px; background: linear-gradient(135deg, #e3f2fd, #bbdefb); border-radius: var(--border-radius);">
+                                    <h4><i class="fas fa-calendar-alt"></i> الجدول الزمني المقترح</h4>
+                                    <div id="timelineDetails" style="margin-top: 15px;">
+                                        <!-- Will be populated by JS -->
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Risks Tab -->
+                            <div class="tab-content" id="risksTab">
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
+                                    <div>
+                                        <h4><i class="fas fa-radar"></i> تحليل المخاطر</h4>
+                                        <div style="height: 300px; margin-top: 20px;">
+                                            <canvas id="riskRadarChart"></canvas>
+                                        </div>
+                                    </div>
+
+                                    <div>
+                                        <h4><i class="fas fa-exclamation-triangle"></i> المخاطر المحتملة</h4>
+                                        <div id="riskAnalysis" style="margin-top: 20px;">
+                                            <div
+                                                style="background: #fff3cd; padding: 20px; border-radius: 8px; border-right: 5px solid #ffc107;">
+                                                <p id="riskAnalysisText">يرجى استكمال البيانات لعرض تحليل المخاطر.</p>
+                                            </div>
+
+                                            <div style="margin-top: 20px;">
+                                                <h5><i class="fas fa-shield-alt"></i> إجراءات الوقاية</h5>
+                                                <ul id="preventionActions"
+                                                    style="margin-top: 10px; padding-right: 20px;">
+                                                    <!-- Will be populated by JS -->
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div style="margin-top: 30px; text-align: center;">
+                            <button id="btnSaveProject" class="btn btn-secondary" onclick="window.bridge.saveProject()">
+                                <i class="fas fa-save"></i> حفظ المشروع
+                            </button>
+                            <button class="btn btn-primary" onclick="window.bridge.exportReport()">
+                                <i class="fas fa-download"></i> تصدير التقرير
+                            </button>
+                            <button class="btn btn-outline" onclick="window.bridge.startNewProject()">
+                                <i class="fas fa-plus"></i> مشروع جديد
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Projects Section (Placeholder for future) -->
+            <div id="projectsManager" class="projects-section">
+                <h3><i class="fas fa-folder-open"></i> مشاريعي السابقة</h3>
+                <div class="projects-grid" id="projectsGrid"></div>
+            </div>
+        </section>
+
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-section">
+                <h4><i class="fas fa-bell"></i> تنبيهات زراعية</h4>
+                <div class="notifications-list">
+                    <div class="notification-item">
+                        <div class="notification-icon warning">
+                            <i class="fas fa-temperature-high"></i>
+                        </div>
+                        <div class="notification-content">
+                            <p>تحذير صقيع</p>
+                            <small>احتمالية صقيع في المناطق الشمالية</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="sidebar-section">
+                <h4><i class="fas fa-cloud-upload-alt"></i> حالة المزامنة</h4>
+                <div class="sync-info">
+                    <div class="sync-progress">
+                        <div class="progress-bar" id="syncProgress" style="width: 85%"></div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+    </main>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+        <div class="footer-bottom">
+            <p>© 2025 مواسم تك. جميع الحقوق محفوظة.</p>
+        </div>
+    </footer>
+
+    <!-- Save Project Modal (Better than browser prompt) -->
+    <div id="saveProjectModal" class="modal-overlay"
+        style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:1000; justify-content:center; align-items:center;">
+        <div class="modal-content"
+            style="background:white; padding:30px; border-radius:15px; width:90%; max-width:400px; box-shadow:0 10px 25px rgba(0,0,0,0.2); animation: slideUp 0.3s ease;">
+            <h3 style="margin-top:0; color:var(--primary-color); text-align:center; margin-bottom:20px;">
+                <i class="fas fa-save"></i> حفظ المشروع
+            </h3>
+            <div class="form-group">
+                <label for="saveProjectName" style="display:block; margin-bottom:10px; font-weight:bold;">اسم
+                    المشروع:</label>
+                <input type="text" id="saveProjectName" class="form-control"
+                    style="width:100%; padding:10px; border:1px solid #ddd; border-radius:8px;"
+                    placeholder="أدخل اسم المشروع...">
+            </div>
+            <div style="display:flex; gap:10px; margin-top:20px; justify-content:center;">
+                <button class="btn btn-primary" onclick="window.bridge.confirmSaveProject()" style="flex:1;">
+                    <i class="fas fa-check"></i> حفظ
+                </button>
+                <button class="btn btn-danger"
+                    onclick="document.getElementById('saveProjectModal').style.display='none'"
+                    style="flex:1; background:#f44336;">
+                    <i class="fas fa-times"></i> الغاء
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Project Modal -->
+    <div id="deleteProjectModal" class="modal-overlay"
+        style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:1000; justify-content:center; align-items:center;">
+        <div class="modal-content"
+            style="background:white; padding:30px; border-radius:15px; width:90%; max-width:400px; box-shadow:0 10px 25px rgba(0,0,0,0.2); animation: slideUp 0.3s ease; text-align:center;">
+            <div style="font-size:3rem; color:#f44336; margin-bottom:15px;"><i class="fas fa-trash-alt"></i></div>
+            <h3 style="margin-top:0; color:#333; margin-bottom:10px;">حذف المشروع؟</h3>
+            <p style="color:#666; margin-bottom:25px;">هل أنت متأكد من رغبتك في حذف هذا المشروع نهائياً؟ لا يمكن التراجع
+                عن هذا الإجراء.</p>
+
+            <div style="display:flex; gap:10px; justify-content:center;">
+                <button class="btn btn-danger" onclick="window.bridge.confirmDeleteProject()"
+                    style="flex:1; background:#f44336;">
+                    <i class="fas fa-trash"></i> نعم، حذف
+                </button>
+                <button class="btn btn-secondary"
+                    onclick="document.getElementById('deleteProjectModal').style.display='none'"
+                    style="flex:1; background:#e0e0e0; color:#333;">
+                    <i class="fas fa-times"></i> لا، تراجع
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="notificationToast" class="toast">
+        <div class="toast-content">
+            <i class="fas fa-check-circle"></i>
+            <span id="toastMessage">تم الحفظ بنجاح</span>
+        </div>
+    </div>
+
+    <!-- CORE LOGIC SCRIPTS FROM THE ORIGINAL BRAIN -->
+    <script src="js/fertilizer_data.js?v=5"></script>
+    <script src="js/fertilizer_logic.js?v=5"></script>
+    <script src="js/seeds_logic.js?v=5"></script>
+
+    <!-- NEW BRIDGE SCRIPT -->
+    <script src="js/dashboard_bridge.js?v=5"></script>
+</body>
+
+</html>

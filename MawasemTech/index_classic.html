@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مواسم تك - خدمات زراعية ذكية</title>
+    <meta name="description"
+        content="شركة متخصصة في تقديم حلول زراعية متكاملة تجمع بين الخبرة الزراعية والتقنيات الحديثة">
+    <meta name="keywords" content="زراعة, أدوات زراعية, بذور, أسمدة, ري ذكي, استشارات زراعية">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" type="image/x-icon" href="assets/images/favicon.ico">
+</head>
+
+<body>
+    <!-- رأس الموقع -->
+    <header class="site-header">
+        <div class="container">
+            <div class="header-content">
+                <!-- الشعار -->
+                <div class="logo">
+                    <div class="logo-icon">
+                        <i class="fas fa-leaf"></i>
+                    </div>
+                    <div class="logo-text">
+                        <h1>مواسم تك</h1>
+                        <p>خدمات زراعية ذكية</p>
+                    </div>
+                </div>
+
+                <!-- التنقل الرئيسي -->
+                <nav class="main-nav">
+                    <ul class="nav-list">
+                        <li class="nav-item active"><a href="#home" class="nav-link">الرئيسية</a></li>
+                        <li class="nav-item"><a href="#services" class="nav-link">خدماتنا</a></li>
+                        <li class="nav-item"><a href="#products" class="nav-link">منتجاتنا</a></li>
+                        <li class="nav-item"><a href="#tools" class="nav-link">الأدوات</a></li>
+                        <li class="nav-item"><a href="#contact" class="nav-link">اتصل بنا</a></li>
+                    </ul>
+                </nav>
+
+                <!-- إجراءات المستخدم -->
+                <div class="user-actions">
+                    <!-- سلة التسوق -->
+                    <div class="cart-wrapper">
+                        <button class="cart-toggle" id="cartToggle">
+                            <i class="fas fa-shopping-cart"></i>
+                            <span class="cart-count" id="cartCount">0</span>
+                        </button>
+                    </div>
+
+                    <!-- زر القائمة للجوال -->
+                    <button class="mobile-menu-toggle" id="mobileMenuToggle">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- القسم الرئيسي -->
+    <section id="home" class="hero-section">
+        <div class="container">
+            <div class="hero-content">
+                <h2 class="hero-title">مدخلات زراعية ذكية لموسم ناجح</h2>
+                <p class="hero-description">
+                    من البذرة إلى الحصاد.. كل ما تحتاجه مزرعتك في مكان واحد!
+                    نحن نقدم حلولاً زراعية متكاملة تجمع بين الخبرة التقليدية والتقنيات الحديثة.
+                </p>
+                <div class="hero-actions">
+                    <a href="#products" class="btn btn-primary btn-lg">
+                        <i class="fas fa-shopping-bag"></i> تصفح المنتجات
+                    </a>
+                    <a href="#contact" class="btn btn-outline btn-lg">
+                        <i class="fas fa-calendar-check"></i> احجز خدمة
+                    </a>
+                </div>
+                <div class="hero-stats">
+                    <div class="stat-item">
+                        <span class="stat-number">5,000+</span>
+                        <span class="stat-label">مزارع راضي</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">200+</span>
+                        <span class="stat-label">منتج متخصص</span>
+                    </div>
+                </div>
+            </div>
+            <div class="hero-image">
+                <img src="https://images.unsplash.com/photo-1500382017468-9049fed747ef?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80"
+                    alt="زراعة ذكية" loading="lazy">
+            </div>
+        </div>
+    </section>
+
+    <!-- قسم الخدمات -->
+    <section id="services" class="services-section">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">خدماتنا المتكاملة</h2>
+                <p class="section-description">
+                    نقدم مجموعة متكاملة من الخدمات الزراعية التقليدية والرقمية
+                </p>
+            </div>
+
+            <div class="services-grid">
+                <div class="service-card">
+                    <div class="service-icon"><i class="fas fa-seedling"></i></div>
+                    <h3 class="service-title">المدخلات الزراعية</h3>
+                    <p class="service-description">بذور عالية الجودة، أسمدة، ومستلزمات الزراعة بأسعار تنافسية</p>
+                </div>
+
+                <div class="service-card">
+                    <div class="service-icon"><i class="fas fa-tools"></i></div>
+                    <h3 class="service-title">الاستشارات الفنية</h3>
+                    <p class="service-description">فريق من الخبراء لتقديم الاستشارات الزراعية المتخصصة</p>
+                </div>
+
+                <a href="irrigation.html" class="service-card"
+                    style="text-decoration: none; color: inherit; display: block;">
+                    <div class="service-icon"><i class="fas fa-tint"></i></div>
+                    <h3 class="service-title">حاسبة الري الذكية</h3>
+                    <p class="service-description">تقدير احتياجات المياه لمحاصيلك بدقة (متاح الآن)</p>
+                </a>
+
+                <div class="service-card coming-soon-service">
+                    <div class="service-icon"><i class="fas fa-tablet-alt"></i></div>
+                    <h3 class="service-title">الحلول الرقمية</h3>
+                    <p class="service-description">تطبيقات وأدوات رقمية لمراقبة الآداء (قريباً)</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- قسم المنتجات المميزة -->
+    <section id="products" class="featured-products">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">منتجاتنا المتميزة</h2>
+                <p class="section-description">اكتشف أفضل المدخلات الزراعية من مصادر موثوقة</p>
+            </div>
+            <div class="products-grid" id="featuredProducts">
+                <!-- المنتجات تُحمّل ديناميكياً عبر JavaScript -->
+            </div>
+        </div>
+    </section>
+
+    <!-- قسم الأدوات الزراعية -->
+    <section id="tools" class="tools-section">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">أدواتنا الزراعية الذكية</h2>
+                <p class="section-description">استخدم أدواتنا التفاعلية لحساب احتياجاتك الزراعية بدقة</p>
+            </div>
+
+            <div class="tools-grid">
+                <div class="tool-card" data-tool="seeds">
+                    <div class="tool-icon"><i class="fas fa-seedling"></i></div>
+                    <h3 class="tool-title">حاسبة البذور</h3>
+                    <p class="tool-description">احسب الكمية الدقيقة من البذور المطلوبة لمساحة زراعتك</p>
+                    <a href="seeds.html" class="btn btn-outline">
+                        <i class="fas fa-calculator"></i> استخدام الأداة
+                    </a>
+                </div>
+
+                <div class="tool-card" data-tool="fertilizer">
+                    <div class="tool-icon"><i class="fas fa-vial"></i></div>
+                    <h3 class="tool-title">حاسبة الأسمدة</h3>
+                    <p class="tool-description">حدد الكمية المناسبة من الأسمدة لمحاصيلك</p>
+                    <a href="fertilizer.html" class="btn btn-outline">
+                        <i class="fas fa-calculator"></i> استخدام الأداة
+                    </a>
+                </div>
+
+                <div class="tool-card" data-tool="irrigation">
+                    <div class="tool-icon"><i class="fas fa-tint"></i></div>
+                    <h3 class="tool-title">حاسبة الري</h3>
+                    <p class="tool-description">تقدير احتياجات المياه لمحاصيلك بدقة</p>
+                    <a href="irrigation.html" class="btn btn-outline">
+                        <i class="fas fa-calculator"></i> استخدام الأداة
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- قسم التقييمات -->
+    <section class="testimonials-section">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">ماذا يقول عملاؤنا</h2>
+            </div>
+            <div class="testimonials-slider" id="testimonialsSlider">
+                <!-- التقييمات تُحمّل ديناميكياً -->
+            </div>
+        </div>
+    </section>
+
+    <!-- قسم الاتصال -->
+    <section id="contact" class="contact-section">
+        <div class="container">
+            <div class="contact-grid">
+                <div class="contact-info">
+                    <h2 class="section-title">تواصل معنا</h2>
+                    <p class="contact-description">نحن هنا لمساعدتك في جميع استفساراتك وطلباتك</p>
+                    <div class="contact-details">
+                        <div class="contact-item">
+                            <div class="contact-icon"><i class="fas fa-envelope"></i></div>
+                            <div class="contact-text">
+                                <h4>البريد الإلكتروني</h4>
+                                <p>info@mawasemtech.com</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="contact-form">
+                    <h3>أرسل لنا رسالة</h3>
+                    <form id="contactForm">
+                        <div class="form-group">
+                            <label for="contactName">الاسم الكامل *</label>
+                            <input type="text" id="contactName" name="name" required>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="contactEmail">البريد الإلكتروني *</label>
+                                <input type="email" id="contactEmail" name="email" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="contactPhone">رقم الهاتف</label>
+                                <input type="tel" id="contactPhone" name="phone">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="contactMessage">الرسالة *</label>
+                            <textarea id="contactMessage" name="message" rows="5" required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-block">
+                            <i class="fas fa-paper-plane"></i> إرسال الرسالة
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- تذييل الموقع -->
+    <footer class="site-footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-section">
+                    <div class="footer-logo">
+                        <div class="logo-icon"><i class="fas fa-leaf"></i></div>
+                        <div class="logo-text">
+                            <h3>مواسم تك</h3>
+                            <p>خدمات زراعية ذكية</p>
+                        </div>
+                    </div>
+                    <p class="footer-description">نجمع بين الخبرة الزراعية والتقنيات الحديثة لتحقيق أفضل النتائج.</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <div class="copyright">
+                    <p>جميع الحقوق محفوظة &copy; <span id="currentYear"></span> مواسم تك</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- معاينة سلة التسوق -->
+    <div class="cart-preview" id="cartPreview">
+        <div class="cart-overlay" id="cartOverlay"></div>
+        <div class="cart-sidebar">
+            <div class="cart-header">
+                <h3><i class="fas fa-shopping-cart"></i> سلة التسوق</h3>
+                <button class="cart-close" id="cartClose"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="cart-body" id="cartBody"></div>
+            <div class="cart-footer">
+                <div class="cart-summary">
+                    <div class="cart-total">
+                        <span>الإجمالي:</span>
+                        <span class="total-amount" id="cartTotalAmount">٠ ر.س</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- نماذج الأدوات المنبثقة -->
+    <div id="toolsModals"></div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
