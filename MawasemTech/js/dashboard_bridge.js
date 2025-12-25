@@ -607,7 +607,7 @@ window.bridge = {
         if (results.applicationSchedule) {
             timeline.innerHTML = results.applicationSchedule.map(s => `
                 <div style="background: white; padding: 10px; margin-bottom:5px; border-right: 3px solid var(--primary-color);">
-                    <strong>${s.stage}</strong>: ${s.details}
+                    <strong>${s.stage}</strong>: ${s.fertilizer} (${s.amount} ${s.unit})
                 </div>
              `).join('');
         }
