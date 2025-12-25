@@ -320,16 +320,33 @@ window.bridge = {
             // 1. Calculate Fertilizer Needs
             const results = calculator.calculate(inputs);
 
-            // 2. Calculate Seeds (Simple logic bridge for now using KB)
+            // 2. Calculate Seeds
             const seedResults = this.calculateSeedsInternal(inputs);
 
-            // 3. Map Results to V2 UI
-            this.updateFinancials(results, seedResults);
-            this.updateQuantitiesTable(results, seedResults);
-            this.updateRecommendations(results);
+            // 3. Calculate Irrigation (NEW)
+            let waterResults = null;
+            if (typeof IrrigationCalculator !== 'undefined') {
+                const irrCalc = new IrrigationCalculator();
+                // Map inputs for irrigation logic
+                const irrInputs = {
+                    region: inputs.region || 'central', // Add region input to UI if missing
+                    season: inputs.season,
+                    crop: inputs.crop,
+                    cropType: FERTILIZER_KNOWLEDGE_BASE.CROPS[inputs.crop]?.type,
+                    area: results.area.hectares, // Keep in Ha
+                    irrigationType: inputs.irrigation,
+                    stage: inputs.phenologyStage
+                };
+                waterResults = irrCalc.calculate(irrInputs);
+            }
+
+            // 4. Map Results to V2 UI
+            this.updateFinancials(results, seedResults, waterResults);
+            this.updateQuantitiesTable(results, seedResults, waterResults);
+            this.updateRecommendations(results, waterResults);
             this.updateCharts(results, seedResults);
 
-            this.showToast('تمت الحسابات بنجاح باستخدام المحرك الذكي');
+            this.showToast('تمت الحسابات بنجاح (تسميد + بذور + ري)');
 
 
 
@@ -455,7 +472,10 @@ window.bridge = {
     // ===========================================
     // 📊 Visual Mapping
     // ===========================================
-    updateFinancials: function (fertResults, seedResults) {
+    // ===========================================
+    // 📊 Visual Mapping
+    // ===========================================
+    updateFinancials: function (fertResults, seedResults, waterResults) {
         // Increment Global Counter
         let count = parseInt(localStorage.getItem('mawasem_calc_count') || '0');
         count++;
@@ -470,9 +490,17 @@ window.bridge = {
 
         // Costs
         const fertCost = fertResults.costEstimation?.totalCost || 0;
-        const seedCost = seedResults.cost;
-        // Water/Labor estimates (simple for V2 Demo)
-        const waterCost = fertCost * 0.5;
+        const seedCost = seedResults ? seedResults.cost : 0;
+
+        // Water Cost Logic
+        let waterCost = 0;
+        if (waterResults) {
+            // Approx cost: 0.5 SAR / m3 (pumping cost estimate)
+            waterCost = waterResults.dailyVolume * 90 * 0.5; // 90 days season approx
+        } else {
+            waterCost = fertCost * 0.5; // Fallback
+        }
+
         const laborCost = fertCost * 0.8;
 
         const totalCost = fertCost + seedCost + waterCost + laborCost;
@@ -494,48 +522,84 @@ window.bridge = {
         }
     },
 
-    updateQuantitiesTable: function (fertResults, seedResults) {
+    updateQuantitiesTable: function (fertResults, seedResults, waterResults) {
         const tbody = document.querySelector('#detailsTable tbody');
         tbody.innerHTML = '';
 
         // 1. Seeds
-        const trSeed = document.createElement('tr');
-        trSeed.innerHTML = `
-            <td>البذور/الشتلات</td>
-            <td>${seedResults.weight > 0 ? seedResults.weight.toFixed(1) : seedResults.count.toFixed(0)}</td>
-            <td>${seedResults.weight > 0 ? 'كجم' : 'شتلة'}</td>
-            <td>${Math.round(seedResults.cost)} ر.س</td>
-            <td>
-                جودة: ${this.state.seedQuality}
-                ${seedResults.warning ? `<br><small class="text-danger" style="color:orange"><i class="fas fa-info-circle"></i> ${seedResults.warning}</small>` : ''}
-            </td>
-        `;
-        tbody.appendChild(trSeed);
-
-        // 2. Fertilizers (Summarized)
-        fertResults.fertilizerRecommendations.forEach(rec => {
-            const tr = document.createElement('tr');
-            tr.innerHTML = `
-                <td>سماد: ${rec.fertilizer}</td>
-                <td>${rec.actualAmount.toFixed(1)}</td>
-                <td>${rec.unit}</td>
-                <td>${rec.cost ? Math.round(rec.cost) : '-'} ر.س</td>
-                <td>${rec.note || ''}</td>
+        if (seedResults) {
+            const trSeed = document.createElement('tr');
+            trSeed.innerHTML = `
+                <td>البذور/الشتلات</td>
+                <td>${seedResults.weight > 0 ? seedResults.weight.toFixed(1) : seedResults.count.toFixed(0)}</td>
+                <td>${seedResults.weight > 0 ? 'كجم' : 'شتلة'}</td>
+                <td>${Math.round(seedResults.cost)} ر.س</td>
+                <td>
+                    جودة: ${this.state.seedQuality}
+                    ${seedResults.warning ? `<br><small class="text-danger" style="color:orange"><i class="fas fa-info-circle"></i> ${seedResults.warning}</small>` : ''}
+                </td>
             `;
-            tbody.appendChild(tr);
-        });
+            tbody.appendChild(trSeed);
+        }
+
+        // 2. Irrigation (New)
+        if (waterResults) {
+            const trWater = document.createElement('tr');
+            trWater.style.background = "#e0f7fa"; // Light cyan highlight
+            trWater.innerHTML = `
+                <td><strong>مياه الري (للموسم)</strong></td>
+                <td><strong>${waterResults.dailyVolume}</strong> / يوم</td>
+                <td>متر مكعب</td>
+                <td>-</td>
+                <td>
+                   ${waterResults.note} <br>
+                   <small>ETo: ${waterResults.eto} mm | Kc: ${waterResults.kc} | Eff: ${(waterResults.efficiency * 100).toFixed(0)}%</small>
+                   ${waterResults.warning ? `<br><small style="color:red">${waterResults.warning}</small>` : ''}
+                </td>
+            `;
+            tbody.appendChild(trWater);
+        }
+
+        // 3. Fertilizers
+        if (fertResults.fertilizerRecommendations) {
+            fertResults.fertilizerRecommendations.forEach(rec => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>سماد: ${rec.fertilizer}</td>
+                    <td>${rec.actualAmount.toFixed(1)}</td>
+                    <td>${rec.unit}</td>
+                    <td>${rec.cost ? Math.round(rec.cost) : '-'} ر.س</td>
+                    <td>${rec.note || ''}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
     },
 
-    updateRecommendations: function (results) {
+    updateRecommendations: function (results, waterResults) {
         // Smart Analysis to Recommendations
         if (results.smartAnalysis && results.smartAnalysis.length > 0) {
             const high = results.smartAnalysis.find(a => a.type === 'critical');
             if (high) document.getElementById('recSoil').textContent = high.message;
 
             const warn = results.smartAnalysis.find(a => a.type === 'warning');
-            if (warn) document.getElementById('recIrrigation').textContent = warn.message;
+            if (warn) {
+                document.getElementById('recIrrigation').textContent = warn.message;
+            } else if (waterResults) {
+                // FALLBACK: Use Calculated Irrigation Note if no generic warning
+                document.getElementById('recIrrigation').innerHTML = `
+                    حاجة يومية: <strong>${waterResults.dailyVolume} م3</strong> <br>
+                    ${waterResults.duration ? `تشغيل المضخة: <strong>${waterResults.duration} ساعة</strong>` : 'يرجى ضبط المؤقت حسب التدفق.'}
+                `;
+            }
         } else {
             document.getElementById('recSoil').textContent = "الظروف مثالية، لا توجد تحذيرات حرجة.";
+            if (waterResults) {
+                document.getElementById('recIrrigation').innerHTML = `
+                    حاجة يومية: <strong>${waterResults.dailyVolume} م3</strong>.
+                    كفاءة النظام: ${(waterResults.efficiency * 100).toFixed(0)}%.
+                `;
+            }
         }
 
         // Timeline
@@ -548,6 +612,7 @@ window.bridge = {
              `).join('');
         }
     },
+
 
     updateCharts: function (results, seedResults) {
         // Update Risk Chart if available
