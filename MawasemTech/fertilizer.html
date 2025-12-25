@@ -4,234 +4,318 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>حاسبة الأسمدة الذكية | مواسم تك</title>
+    <title>حاسبة الأسمدة | مواسم تك</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800&display=swap"
         rel="stylesheet">
     <link rel="icon" type="image/svg+xml" href="assets/images/favicon.svg">
-    <link rel="stylesheet" href="css/dashboard.css">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
+        :root {
+            --primary-color: #2e7d32;
+            --secondary-color: #4caf50;
+            --accent-color: #ff9800;
+            --bg-color: #f8f9fa;
+        }
+
         body {
-            background: #f0fff4;
-            background-image: linear-gradient(135deg, #f0fff4 0%, #ffffff 100%);
-        }
-
-        .calculator-container {
-            max-width: 900px;
-            margin: 40px auto;
-            background: white;
-            padding: 0;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
-            overflow: hidden;
-        }
-
-        .calc-header {
-            background: var(--primary-color);
-            color: white;
+            font-family: 'Cairo', sans-serif;
+            background-color: var(--bg-color);
+            margin: 0;
             padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            position: relative;
+        }
+
+        .home-btn {
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            text-decoration: none;
+            color: var(--primary-color);
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .calculator-card {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-family: 'Cairo', sans-serif;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-family: 'Cairo', sans-serif;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+            width: 100%;
+        }
+
+        .btn-primary:hover {
+            background-color: #1b5e20;
+        }
+
+        .results-section {
+            margin-top: 30px;
+            display: none;
+            border-top: 2px solid #eee;
+            padding-top: 30px;
+        }
+
+        .summary-boxes {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .summary-box {
+            background: #f1f8e9;
+            padding: 15px;
+            border-radius: 10px;
             text-align: center;
         }
 
-        .calc-body {
-            padding: 30px;
+        .summary-box h4 {
+            margin: 0 0 10px 0;
+            color: var(--primary-color);
         }
 
-        .back-btn {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            text-decoration: none;
-            color: #2d5c2a;
-            display: flex;
-            align-items: center;
-            gap: 5px;
+        .summary-box .value {
+            font-size: 1.5em;
+            font-weight: bold;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th,
+        td {
+            padding: 12px;
+            text-align: center;
+            border-bottom: 1px solid #eee;
+        }
+
+        th {
+            background-color: #f5f5f5;
         }
     </style>
 </head>
 
 <body>
 
-    <a href="index.html" class="back-btn"><i class="fas fa-arrow-right"></i> العودة للرئيسية</a>
+    <div class="container">
+        <header class="header">
+            <a href="index.html" class="home-btn"><i class="fas fa-home"></i> الرئيسية</a>
+            <h1><i class="fas fa-leaf"></i> حاسبة الأسمدة</h1>
+            <p>أدخل بيانات مزرعتك لتحصل على خطة التسميد المناسبة</p>
+        </header>
 
-    <div class="calculator-container">
-        <div class="calc-header">
-            <h1><i class="fas fa-leaf"></i> حاسبة الأسمدة الذكية</h1>
-            <p>خطط تسميد دقيقة لمحاصيل صحية وإنتاجية عالية</p>
-        </div>
+        <section class="calculator-card">
+            <div class="form-grid">
+                <!-- Crop Selection -->
+                <div class="form-group">
+                    <label>نوع المحصول</label>
+                    <select id="cropType" class="form-control">
+                        <option value="">-- اختر المحصول --</option>
+                    </select>
+                </div>
 
-        <div class="calc-body">
-            <!-- Workflow Steps -->
-            <div class="workflow-steps" style="margin-bottom: 30px;">
-                <div class="step active" data-step="1">
-                    <div class="step-number">1</div><span>المحصول</span>
-                </div>
-                <div class="step" data-step="2">
-                    <div class="step-number">2</div><span>التربة والري</span>
-                </div>
-                <div class="step" data-step="3">
-                    <div class="step-number">3</div><span>بيانات إضافية</span>
-                </div>
-                <div class="step" data-step="4">
-                    <div class="step-number">4</div><span>النتائج</span>
-                </div>
-            </div>
-
-            <!-- Step 1 -->
-            <div class="form-step active" id="step1">
-                <h3>اختر المحصول والمساحة</h3>
-                <div class="form-grid">
-                    <div class="form-group">
-                        <label>نوع المحصول</label>
-                        <select id="cropType" class="form-control"></select>
-                    </div>
-                    <div class="form-group">
-                        <label>المساحة</label>
-                        <div class="input-with-unit">
-                            <input type="number" id="areaSize" class="form-control" placeholder="المساحة">
-                            <select id="areaUnit" class="unit-select">
-                                <option value="hectare">هكتار</option>
-                                <option value="donum">دونم</option>
-                                <option value="acre">فدان</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label>المنطقة</label>
-                        <select id="region" class="form-control">
-                            <option value="central">الوسطى</option>
-                            <option value="north">الشمالية</option>
-                            <option value="south">الجنوبية</option>
-                            <option value="east">الشرقية</option>
+                <!-- Area Input -->
+                <div class="form-group">
+                    <label>المساحة</label>
+                    <div style="display: flex; gap: 10px;">
+                        <input type="number" id="areaSize" class="form-control" placeholder="المساحة">
+                        <select id="areaUnit" class="form-control" style="width: 100px;">
+                            <option value="hectare">هكتار</option>
+                            <option value="donum">دونم</option>
+                            <option value="acre">فدان</option>
                         </select>
                     </div>
                 </div>
-                <div class="text-left mt-20">
-                    <button class="btn btn-primary" onclick="window.fertilizerController.nextStep()">التالي <i
-                            class="fas fa-arrow-left"></i></button>
+
+                <!-- Soil Type -->
+                <div class="form-group">
+                    <label>نوع التربة</label>
+                    <select id="soilType" class="form-control">
+                        <option value="clay">طينية</option>
+                        <option value="sandy">رملية</option>
+                    </select>
+                </div>
+
+                <!-- Irrigation -->
+                <div class="form-group">
+                    <label>نظام الري</label>
+                    <select id="irrigationType" class="form-control">
+                        <option value="drip">تنقيط</option>
+                        <option value="pivot">محوري</option>
+                        <option value="flood">غمر</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>الموسم</label>
+                    <select id="season" class="form-control">
+                        <option value="spring">ربيعي</option>
+                        <option value="summer">صيفي</option>
+                        <option value="winter">شتوي</option>
+                    </select>
                 </div>
             </div>
 
-            <!-- Step 2 -->
-            <div class="form-step" id="step2" style="display:none;">
-                <h3>خصائص التربة والري</h3>
-                <div class="form-grid">
-                    <div class="form-group">
-                        <label>نوع التربة</label>
-                        <div class="selection-grid">
-                            <button class="selection-btn active" onclick="void(0)" data-val="clay">طينية</button>
-                            <button class="selection-btn" onclick="void(0)" data-val="sandy">رملية</button>
-                        </div>
-                        <input type="hidden" id="soilType" value="clay">
+            <button class="btn btn-primary" onclick="calculate()">
+                <i class="fas fa-calculator"></i> احسب الكميات والتكلفة
+            </button>
+
+            <!-- Results -->
+            <div id="results" class="results-section">
+                <h3><i class="fas fa-check-circle"></i> النتائج والتوصيات</h3>
+
+                <div class="summary-boxes">
+                    <div class="summary-box">
+                        <h4>الإجمالي التقديري</h4>
+                        <div class="value" id="totalCost">0 <small style="font-size:0.5em">ر.س</small></div>
                     </div>
-                    <div class="form-group">
-                        <label>نظام الري</label>
-                        <div class="selection-grid">
-                            <button class="selection-btn active" onclick="void(0)" data-val="drip">تنقيط</button>
-                            <button class="selection-btn" onclick="void(0)" data-val="pivot">محوري</button>
-                        </div>
-                        <input type="hidden" id="irrigationType" value="drip">
-                    </div>
-                    <div class="form-group">
-                        <label>الموسم</label>
-                        <select id="season" class="form-control">
-                            <option value="spring">ربيعي</option>
-                            <option value="summer">صيفي</option>
-                            <option value="winter">شتوي</option>
-                        </select>
+                    <div class="summary-box">
+                        <h4>الربح المتوقع</h4>
+                        <div class="value" id="expectedProfit">0 <small style="font-size:0.5em">ر.س</small></div>
                     </div>
                 </div>
-                <div class="flex-between mt-20">
-                    <button class="btn btn-secondary" onclick="window.fertilizerController.prevStep()">السابق</button>
-                    <button class="btn btn-primary" onclick="window.fertilizerController.nextStep()">التالي</button>
-                </div>
+
+                <h4>جدول الكميات</h4>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>السماد</th>
+                            <th>الكمية المطلوبة</th>
+                            <th>الوحدة</th>
+                            <th>التكلفة التقديرية</th>
+                        </tr>
+                    </thead>
+                    <tbody id="resultsBody"></tbody>
+                </table>
             </div>
-
-            <!-- Step 3 -->
-            <div class="form-step" id="step3" style="display:none;">
-                <h3>بيانات إضافية</h3>
-                <div class="form-grid">
-                    <div class="form-group">
-                        <label>جودة البذور</label>
-                        <select id="seedQuality" class="form-control">
-                            <option value="standard">عادية</option>
-                            <option value="hybrid">هجين</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="flex-between mt-20">
-                    <button class="btn btn-secondary" onclick="window.fertilizerController.prevStep()">السابق</button>
-                    <button class="btn btn-primary" onclick="window.fertilizerController.nextStep()">احسب
-                        النتائج</button>
-                </div>
-            </div>
-
-            <!-- Step 4: Results -->
-            <div class="form-step" id="step4" style="display:none;">
-                <h3>النتائج والتوصيات</h3>
-
-                <div class="results-tabs">
-                    <button class="tab-btn active" data-tab="summary">المالية</button>
-                    <button class="tab-btn" data-tab="quantities">الكميات</button>
-                    <button class="tab-btn" data-tab="recommendations">التوصيات</button>
-                </div>
-
-                <div id="summaryTab" class="tab-content active" style="display:block;">
-                    <div class="results-summary">
-                        <div class="summary-card">
-                            <h4>التكلفة</h4>
-                            <div class="summary-value" id="resTotalCost">0</div>
-                        </div>
-                        <div class="summary-card">
-                            <h4>الإيراد</h4>
-                            <div class="summary-value" id="resRevenue">0</div>
-                        </div>
-                        <div class="summary-card">
-                            <h4>الربح</h4>
-                            <div class="summary-value" id="resProfit">0</div>
-                        </div>
-                    </div>
-                    <div style="height:250px; margin-top:20px;"><canvas id="financialChart"></canvas></div>
-                </div>
-
-                <div id="quantitiesTab" class="tab-content" style="display:none;">
-                    <table id="detailsTable" class="table">
-                        <thead>
-                            <tr>
-                                <th>السماد</th>
-                                <th>الكمية</th>
-                                <th>الوحدة</th>
-                                <th>التكلفة</th>
-                                <th>ملاحظات</th>
-                            </tr>
-                        </thead>
-                        <tbody></tbody>
-                    </table>
-                </div>
-
-                <div id="recommendationsTab" class="tab-content" style="display:none;">
-                    <div class="recommendation-card">
-                        <h4>توصيات التربة</h4>
-                        <p id="recSoil">-</p>
-                    </div>
-                    <div style="margin-top:20px;">
-                        <h4>الجدول الزمني</h4>
-                        <div id="timelineDetails"></div>
-                    </div>
-                </div>
-
-                <div class="text-center mt-30">
-                    <button class="btn btn-outline" onclick="window.location.reload()">حساب جديد</button>
-                </div>
-            </div>
-
-        </div>
+        </section>
     </div>
 
+    <!-- Logic Scripts -->
     <script src="js/fertilizer_data.js"></script>
     <script src="js/fertilizer_logic.js"></script>
-    <script src="js/fertilizer_ui.js"></script>
+    <script>
+        // Inline Controller for Classic Mode
+        document.addEventListener('DOMContentLoaded', () => {
+            const select = document.getElementById('cropType');
+            const sortedCrops = Object.entries(FERTILIZER_KNOWLEDGE_BASE.CROPS)
+                .sort(([, a], [, b]) => a.name.localeCompare(b.name, 'ar'));
+
+            sortedCrops.forEach(([key, val]) => {
+                const opt = document.createElement('option');
+                opt.value = key;
+                opt.text = val.name;
+                select.appendChild(opt);
+            });
+        });
+
+        function calculate() {
+            const crop = document.getElementById('cropType').value;
+            const area = parseFloat(document.getElementById('areaSize').value);
+
+            if (!crop || !area) {
+                alert('الرجاء اختيار المحصول وتحديد المساحة!');
+                return;
+            }
+
+            const inputs = {
+                mode: 'basic',
+                crop: crop,
+                area: area,
+                areaUnit: document.getElementById('areaUnit').value,
+                soilType: document.getElementById('soilType').value,
+                irrigation: document.getElementById('irrigationType').value,
+                season: document.getElementById('season').value,
+                phenologyStage: 'vegetative' // Default
+            };
+
+            const calculator = new FertilizerCalculator();
+            const results = calculator.calculate(inputs);
+
+            displayResults(results);
+        }
+
+        function displayResults(res) {
+            document.getElementById('results').style.display = 'block';
+
+            const cost = res.costEstimation ? res.costEstimation.totalCost : 0;
+            const revenue = cost * 1.65; // Simple estimation logic
+            const profit = revenue - cost;
+
+            document.getElementById('totalCost').innerText = Math.round(cost).toLocaleString();
+            document.getElementById('expectedProfit').innerText = Math.round(profit).toLocaleString();
+
+            const tbody = document.getElementById('resultsBody');
+            tbody.innerHTML = '';
+
+            res.fertilizerRecommendations.forEach(rec => {
+                tbody.innerHTML += `
+                    <tr>
+                        <td>${rec.fertilizer}</td>
+                        <td>${rec.actualAmount.toFixed(1)}</td>
+                        <td>${rec.unit}</td>
+                        <td>${Math.round(rec.cost)} ر.س</td>
+                    </tr>
+                `;
+            });
+        }
+    </script>
 </body>
 
 </html>

@@ -4,137 +4,119 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>حاسبة البذور والشتلات | مواسم تك</title>
+    <title>حاسبة البذور | مواسم تك</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800&display=swap"
         rel="stylesheet">
     <link rel="icon" type="image/svg+xml" href="assets/images/favicon.svg">
-    <link rel="stylesheet" href="css/dashboard.css">
     <style>
         body {
-            background: #fdfdfd;
+            font-family: 'Cairo', sans-serif;
+            background: #fafafa;
+            padding: 20px;
         }
 
-        .calculator-container {
+        .container {
             max-width: 800px;
-            margin: 40px auto;
+            margin: 0 auto;
             background: white;
             padding: 30px;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
         }
 
-        .header-section {
+        h1 {
             text-align: center;
-            margin-bottom: 30px;
-            border-bottom: 2px solid #f0f0f0;
-            padding-bottom: 20px;
+            color: #333;
         }
 
-        .header-section h1 {
-            color: var(--primary-color);
-            margin-bottom: 10px;
-        }
-
-        .back-btn {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            text-decoration: none;
+        .back-link {
+            display: inline-block;
+            margin-bottom: 20px;
             color: #666;
-            display: flex;
-            align-items: center;
-            gap: 5px;
+            text-decoration: none;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-family: inherit;
+            box-sizing: border-box;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background: #27ae60;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 1.1em;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #219150;
+        }
+
+        #results {
+            margin-top: 20px;
+            padding: 20px;
+            background: #e8f5e9;
+            border-radius: 5px;
+            display: none;
         }
     </style>
 </head>
 
 <body>
+    <div class="container">
+        <a href="index.html" class="back-link"><i class="fas fa-arrow-right"></i> العودة للرئيسية</a>
+        <h1><i class="fas fa-seedling"></i> حاسبة البذور</h1>
 
-    <a href="index.html" class="back-btn"><i class="fas fa-arrow-right"></i> العودة للرئيسية</a>
-
-    <div class="calculator-container">
-        <div class="header-section">
-            <h1><i class="fas fa-seedling"></i> حاسبة البذور والشتلات</h1>
-            <p>احسب الكميات الدقيقة للبذور أو الشتلات المطلوبة لمزرعتك</p>
+        <div class="form-group">
+            <label>المحصول</label>
+            <select id="crop-select">
+                <option value="">-- اختر --</option>
+            </select>
         </div>
 
-        <div class="form-grid">
-            <div class="form-group">
-                <label><i class="fas fa-carrot"></i> اختر المحصول</label>
-                <select id="crop-select" class="form-control" onchange="updateCalculatorMode(this.value)">
-                    <option value="">-- اختر المحصول --</option>
-                    <!-- Populated by JS -->
+        <div class="form-group">
+            <label>المساحة</label>
+            <div style="display:flex; gap:10px;">
+                <input type="number" id="area" placeholder="القيمة">
+                <select id="area-unit" style="width:120px;">
+                    <option value="hectare">هكتار</option>
+                    <option value="donum">دونم</option>
+                    <option value="acre">فدان</option>
                 </select>
             </div>
-
-            <div class="form-group">
-                <label><i class="fas fa-expand"></i> المساحة</label>
-                <div class="input-with-unit">
-                    <input type="number" id="area" class="form-control" placeholder="المساحة">
-                    <select id="area-unit" class="unit-select">
-                        <option value="hectare">هكتار</option>
-                        <option value="donum">دونم</option>
-                        <option value="acre">فدان</option>
-                        <option value="m2">متر²</option>
-                    </select>
-                </div>
-            </div>
         </div>
 
-        <!-- Dynamic Inputs Container (Injected by seeds_logic.js) -->
-        <div id="dynamic-inputs"
-            style="margin-top: 20px; background: #f9fbfd; padding: 20px; border-radius: 10px; border: 1px solid #e1e4e8;">
-            <div class="text-center" style="color:#777; padding:20px;">
-                <i class="fas fa-arrow-up"></i> يرجى اختيار المحصول أولاً لتحديد طريقة الحساب
-            </div>
-        </div>
+        <div id="dynamic-inputs"></div>
 
-        <div style="margin-top: 30px; text-align: center;">
-            <button class="btn btn-primary btn-lg" onclick="calculateSeeds()" style="width: 100%; max-width: 300px;">
-                <i class="fas fa-calculator"></i> احسب الكميات
-            </button>
-            <button class="btn btn-secondary" onclick="resetForm()" style="margin-top: 10px;">
-                <i class="fas fa-redo"></i> مسح البيانات
-            </button>
-        </div>
+        <button onclick="calculateSeeds()">احسب الكمية</button>
 
-        <!-- Results Container -->
-        <div id="results-container" style="display: none; margin-top: 40px; animation: slideUp 0.3s ease;">
-            <h3 style="border-bottom: 2px solid var(--secondary-color); padding-bottom: 10px; margin-bottom: 20px;">
-                <i class="fas fa-check-circle"></i> النتائج
-            </h3>
-
-            <div class="results-summary">
-                <div class="summary-card" style="background: linear-gradient(135deg, #e8f5e9, #c8e6c9); border:none;">
-                    <h4 id="result-summary-title">الكمية المطلوبة</h4>
-                    <div class="summary-value">
-                        <span id="quantity-value">0</span> <small id="quantity-unit">-</small>
-                    </div>
-                    <p id="result-summary-subtitle" style="color: #2e7d32;">-</p>
-                </div>
-            </div>
-
-            <div id="nursery-card"
-                style="margin-top: 20px; display: none; background: #fff3e0; padding: 20px; border-radius: 8px; border-right: 5px solid #ff9800;">
-                <h4><i class="fas fa-warehouse"></i> تفاصيل المشتل</h4>
-                <ul id="nursery-details" style="margin-right: 20px; margin-top: 10px;"></ul>
-            </div>
-
-            <div class="detailed-table-container" style="margin-top: 20px;">
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th colspan="2">تفاصيل الحساب</th>
-                        </tr>
-                    </thead>
-                    <tbody id="technical-details-body"></tbody>
-                </table>
-            </div>
+        <div id="results">
+            <h3>النتيجة:</h3>
+            <div id="result-text" style="font-size: 1.2em; font-weight: bold; color: #2e7d32;"></div>
+            <ul id="details-list" style="margin-top:10px; color:#555;"></ul>
         </div>
     </div>
 
-    <!-- Scripts -->
     <script src="js/fertilizer_data.js"></script>
     <script src="js/seeds_logic.js"></script>
 </body>

@@ -4,181 +4,162 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>حاسبة الري الذكية | مواسم تك</title>
+    <title>حاسبة الري | مواسم تك</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800&display=swap"
         rel="stylesheet">
     <link rel="icon" type="image/svg+xml" href="assets/images/favicon.svg">
-    <link rel="stylesheet" href="css/dashboard.css">
     <style>
         body {
+            font-family: 'Cairo', sans-serif;
             background: #e0f7fa;
-            background-image: linear-gradient(135deg, #e0f7fa 0%, #ffffff 100%);
+            padding: 20px;
         }
 
-        .calculator-container {
+        .container {
             max-width: 800px;
-            margin: 40px auto;
+            margin: 0 auto;
             background: white;
             padding: 30px;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
         }
 
-        .header-section {
+        h1 {
             text-align: center;
-            margin-bottom: 30px;
-            border-bottom: 2px solid #b2ebf2;
-            padding-bottom: 20px;
-        }
-
-        .header-section h1 {
-            color: #00838f;
-            margin-bottom: 10px;
-        }
-
-        .back-btn {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            text-decoration: none;
             color: #006064;
-            display: flex;
-            align-items: center;
-            gap: 5px;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 20px;
+            color: #00838f;
+            text-decoration: none;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #b2ebf2;
+            border-radius: 5px;
+            font-family: inherit;
+            box-sizing: border-box;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background: #00acc1;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 1.1em;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #0097a7;
+        }
+
+        #results-container {
+            margin-top: 20px;
+            padding: 20px;
+            background: #e1f5fe;
+            border-radius: 5px;
+            display: none;
         }
     </style>
 </head>
 
 <body>
+    <div class="container">
+        <a href="index.html" class="back-link"><i class="fas fa-arrow-right"></i> العودة للرئيسية</a>
+        <h1><i class="fas fa-tint"></i> حاسبة الري</h1>
 
-    <a href="index.html" class="back-btn"><i class="fas fa-arrow-right"></i> العودة للرئيسية</a>
-
-    <div class="calculator-container">
-        <div class="header-section">
-            <h1><i class="fas fa-tint"></i> حاسبة الري الذكية</h1>
-            <p>تقدير الاحتياجات المائية بدقة بناءً على المنطقة والمحصول</p>
+        <div class="form-group">
+            <label>المنطقة</label>
+            <select id="region">
+                <option value="central">الوسطى</option>
+                <option value="north">الشمالية</option>
+                <option value="south">الجنوبية</option>
+                <option value="east">الشرقية</option>
+                <option value="west">الغربية</option>
+            </select>
         </div>
 
-        <div class="form-grid">
-            <!-- Step 1: Location & Crop -->
-            <div class="form-group">
-                <label><i class="fas fa-map-marker-alt"></i> المنطقة</label>
-                <select id="region" class="form-control">
-                    <option value="central">الوسطى (جاف وحار)</option>
-                    <option value="north">الشمالية (معتدل)</option>
-                    <option value="south">الجنوبية (رطب)</option>
-                    <option value="east">الشرقية (رطب وحار)</option>
-                    <option value="west">الغربية (حار رطب)</option>
+        <div class="form-group">
+            <label>المحصول</label>
+            <select id="crop-select">
+                <option value="">-- اختر --</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>المساحة</label>
+            <div style="display:flex; gap:10px;">
+                <input type="number" id="area" placeholder="القيمة">
+                <select id="area-unit" style="width:120px;">
+                    <option value="hectare">هكتار</option>
+                    <option value="donum">دونم</option>
+                    <option value="acre">فدان</option>
                 </select>
-            </div>
-
-            <div class="form-group">
-                <label><i class="fas fa-cloud-sun"></i> الموسم الحالي</label>
-                <select id="season" class="form-control">
-                    <option value="summer">الصيف</option>
-                    <option value="winter">الشتاء</option>
-                    <option value="spring">الربيع</option>
-                    <option value="fall">الخريف</option>
-                </select>
-            </div>
-
-            <div class="form-group">
-                <label><i class="fas fa-carrot"></i> المحصول</label>
-                <select id="crop-select" class="form-control">
-                    <option value="">-- اختر المحصول --</option>
-                    <!-- Populated by JS -->
-                </select>
-            </div>
-
-            <div class="form-group">
-                <label><i class="fas fa-seedling"></i> مرحلة النمو</label>
-                <select id="growth-stage" class="form-control">
-                    <option value="mid">منتصف الموسم (الأكثر استهلاكاً)</option>
-                    <option value="initial">بداية الزراعة (تأسيس)</option>
-                    <option value="end">نهاية الموسم (نضج)</option>
-                </select>
-            </div>
-
-            <!-- Step 2: Area & System -->
-            <div class="form-group">
-                <label><i class="fas fa-expand"></i> المساحة</label>
-                <div class="input-with-unit">
-                    <input type="number" id="area" class="form-control" placeholder="المساحة">
-                    <select id="area-unit" class="unit-select">
-                        <option value="hectare">هكتار</option>
-                        <option value="donum">دونم</option>
-                        <option value="acre">فدان</option>
-                        <option value="m2">متر²</option>
-                    </select>
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label><i class="fas fa-faucet"></i> نظام الري</label>
-                <select id="irrigation-type" class="form-control">
-                    <option value="drip">تنقيط (Drip) - كفاءة 90%</option>
-                    <option value="pivot">رش محوري (Pivot) - كفاءة 85%</option>
-                    <option value="sprinkler">رشاشات عادية - كفاءة 75%</option>
-                    <option value="flood">غمر (Flood) - كفاءة 60%</option>
-                </select>
-            </div>
-
-            <div class="form-group">
-                <label><i class="fas fa-tachometer-alt"></i> تدفق المضخة (م³/ساعة)</label>
-                <input type="number" id="flow-rate" class="form-control" placeholder="اختياري (لحساب الساعات)">
             </div>
         </div>
 
-        <div style="margin-top: 30px; text-align: center;">
-            <button class="btn btn-primary btn-lg" onclick="calculateIrrigation()"
-                style="width: 100%; max-width: 300px; background: #00838f; border-color: #00838f;">
-                <i class="fas fa-tint"></i> احسب الاحتياج المائي
-            </button>
-            <button class="btn btn-secondary" onclick="resetForm()" style="margin-top: 10px;">
-                <i class="fas fa-redo"></i> مسح البيانات
-            </button>
+        <div class="form-group">
+            <label>نظام الري</label>
+            <select id="irrigation-type">
+                <option value="drip">تنقيط</option>
+                <option value="pivot">محوري</option>
+                <option value="flood">غمر</option>
+            </select>
         </div>
 
-        <!-- Results Container -->
-        <div id="results-container" style="display: none; margin-top: 40px; animation: slideUp 0.3s ease;">
-            <h3 style="border-bottom: 2px solid #b2ebf2; padding-bottom: 10px; margin-bottom: 20px;">
-                <i class="fas fa-check-circle"></i> نتائج الري
-            </h3>
+        <div class="form-group">
+            <label>الموسم</label>
+            <select id="season">
+                <option value="summer">الصيف</option>
+                <option value="winter">الشتاء</option>
+                <option value="spring">الربيع</option>
+            </select>
+        </div>
 
-            <div class="results-summary" style="grid-template-columns: 1fr 1fr;">
-                <div class="summary-card" style="background: #e0f7fa; border:none;">
-                    <h4>الاحتياج اليومي</h4>
-                    <div class="summary-value">
-                        <span id="res-daily-vol">0</span> <small>م³</small>
-                    </div>
-                    <p style="color: #006064;">إجمالي للمساحة المحددة</p>
-                </div>
+        <div class="form-group">
+            <label>مرحلة النمو</label>
+            <select id="growth-stage">
+                <option value="mid">منتصف الموسم (الأعلى استهلاكاً)</option>
+                <option value="initial">بداية الزراعة</option>
+                <option value="end">النضج والحصاد</option>
+            </select>
+        </div>
 
-                <div class="summary-card" style="background: #e1f5fe; border:none;">
-                    <h4>ساعات التشغيل</h4>
-                    <div class="summary-value">
-                        <span id="res-duration">-</span>
-                    </div>
-                    <p style="color: #01579b;">بناءً على تدفق المضخة</p>
-                </div>
+        <input type="hidden" id="flow-rate" value="0"> <!-- Simplified -->
+
+        <button onclick="calculateIrrigation()">احسب الاحتياج المائي</button>
+
+        <div id="results-container">
+            <h3>النتيجة اليومية:</h3>
+            <div style="font-size: 1.5em; font-weight: bold; color: #01579b;">
+                <span id="res-daily-vol">0</span> م³ / يوم
             </div>
 
-            <div style="margin-top: 20px; background: #fff; padding: 20px; border-radius: 8px; border: 1px solid #eee;">
-                <h4><i class="fas fa-flask"></i> تفاصيل فنية</h4>
-                <ul id="technical-details"
-                    style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; color: #555;">
-                    <!-- Populated by JS -->
-                </ul>
-            </div>
-
-            <div id="res-notes" style="margin-top: 15px; padding: 15px; background: #fff9c4; border-radius: 8px;">
-                <!-- Notes -->
-            </div>
+            <ul id="technical-details" style="margin-top:15px; color:#555; list-style:none; padding:0;"></ul>
+            <div id="res-notes" style="margin-top:10px; font-size:0.9em;"></div>
+            <p style="display:none;" id="res-duration"></p>
         </div>
     </div>
 
-    <!-- Scripts -->
     <script src="js/fertilizer_data.js"></script>
     <script src="js/irrigation_logic.js"></script>
     <script src="js/irrigation_ui.js"></script>
